@@ -1,0 +1,15 @@
+{
+	"wpVer": "4.7.3",
+	"url": "http://psiad.dev",
+	"tablePrefix": "wp_",
+	"dbHost": "localhost",
+	"dbName": "psiad.dev",
+	"dbUser": "root",
+	"dbPass": "",
+	"git": false,
+	"customDirs": false,
+	"installTheme": false,
+	"wpDir": ".",
+	"contentDir": "wp-content",
+	"saltKeys": "define('AUTH_KEY',         'j4t[zu4BxkaY+S5=ijYSn[SUb,g&Q=;$KIoBD~X|bazr1>}:hm/Y/PY*|K5uC^Gs');\ndefine('SECURE_AUTH_KEY',  'DO0pYY|&`g-QwMA([(-+pvt1g5V6KlIzH`Ac4BH;+51}e-vyQFK#(<kxPm=~V11:');\ndefine('LOGGED_IN_KEY',    'Itm8~uf^kL4*z vbce|g/FDGFLd1Gtj,8FtBCfkm,C WW}`mav?|&*<W8xDFa,D]');\ndefine('NONCE_KEY',        'x-i/{~zzwf2iGz7,B,5jM:EaD~7N?(|1+X@w+}eMv:Q|q2l<GK%TbeT%#X,f5EvD');\ndefine('AUTH_SALT',        '6,q#&ig$s~e{Ko&lj|7UI|0}0(z|+|2T,c4DrEwA/K;U7g|w8i|,/c{%EyR.ASyj');\ndefine('SECURE_AUTH_SALT', 'a*Q`9~e!-[uJ_3$P4T;$xG HS[6~Kr-s8+v@hs~+58BLO;G/N6H7])1:oI,VIX^m');\ndefine('LOGGED_IN_SALT',   'i-]SEz=6Ftfb~bR+Jw1<qBuDG2rWhX]=M--vN-8k|D+80SE[7-O.he-GfGU+|L%L');\ndefine('NONCE_SALT',       '9-!^^h&9[69]]qaB,~hl@)t%@,X_A|4<sZ-s4kWzo-qD]{)lW`aI2q%83q(U.JJ ');\n"
+}
