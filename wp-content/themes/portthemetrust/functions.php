@@ -942,4 +942,8 @@ function kriesi_pagination($pages = '', $range = 2) {
      }
 }
 
+
+  //Custom Post Types
+  require('functions/custom-post-types.php');
+
 ?>

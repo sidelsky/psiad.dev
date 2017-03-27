@@ -842,7 +842,7 @@ h2.extraSpacing {
 }
 
 #downButton {
-  background: transparent url(images/arrow_down.png) center center no-repeat;
+  background: transparent url(../portthemetrust/images/arrow_down.png) center center no-repeat;
   background-size: 70px 37px !important;
   border-radius: 30px;
   width: 70px;
@@ -871,16 +871,12 @@ h2.extraSpacing {
 
 .homeSection .viewAll {
   text-align: center;
-  padding: 0 0;
-  display: inline-block;
-  position: absolute;
-  right: 0;
-  bottom: 0;
+  padding: 20px 0 0;
 }
 
 .homeSection .viewAll .button {
   margin: 0 !important;
-  background: transparent;
+  background: white;
   color: #b4b4b4;
   border: 2px solid #b4b4b4;
   border-radius: 0;
