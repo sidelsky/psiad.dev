@@ -33,11 +33,20 @@
 	?>		
 	<?php $projects = new WP_Query( $args ); ?>
 	<div class="wrap">				
-	<div class="thumbs clearfix">			
-		<?php  while ($projects->have_posts()) : $projects->the_post(); ?>		
-			<?php get_template_part( 'part-project-thumb'); ?>
-		<?php endwhile; ?>				
+		<div class="thumbs clearfix">			
+			<?php  while ($projects->have_posts()) : $projects->the_post(); ?>		
+				<?php get_template_part( 'part-project-thumb'); ?>
+			<?php endwhile; ?>				
+		</div>
 	</div>
+
+	<?php /*
+	<div class="viewAll">
+		<a href="<?php echo get_permalink($page_ID); ?>" class="button"><?php echo of_get_option('ttrust_projects_button_label'); ?></a>
 	</div>
+	*/?>
+
 </div>
+
+
 <?php endif; ?>

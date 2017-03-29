@@ -147,6 +147,13 @@ div.wp-caption img {
   height: auto;
 }
 
+.ers-intro {
+  font-size: 1.2em !important;
+  font-weight: 100;
+  font-family: 'Open Sans', sans-serif;
+  line-height: 1.60;
+}
+
 .wp-caption {
   max-width: auto !important;
   width: auto !important;
@@ -494,9 +501,8 @@ body.home.blog #middle {
 }
 
 #header .top .inside {
-  padding: 20px 30px 20px 30px;
+  padding: 10px 30px;
   margin: 0 auto !important;
-  margin: 0 auto;
   position: relative;
 }
 
@@ -596,6 +602,7 @@ body.home.blog #middle {
   top: 50%;
   margin-top: -16px;
   transition: .5s;
+  display: none;
 }
 
 .closeBtn {
@@ -907,7 +914,15 @@ h2.extraSpacing {
   position: relative;
 }
 
-#projects.homeSection .sectionHead, #homePosts.homeSection .sectionHead {
+body.home #projects,
+body.home #testimonials {
+  background-color: #f7f7f7;
+}
+
+#projects.homeSection .sectionHead,
+#homePosts.homeSection .sectionHead,
+#blog.homeSection .sectionHead,
+#testimonials.homeSection .sectionHead {
   text-align: left;
 }
 
@@ -955,10 +970,6 @@ h2.extraSpacing {
   font-size: .9em !important;
 }
 
-#testimonials .inside {
-  margin: 0 15px;
-}
-
 #testimonials a {
   position: relative;
   display: block;
@@ -971,7 +982,7 @@ h2.extraSpacing {
   font-weight: bold;
   text-align: center;
   width: 100%;
-  margin-bottom: 10px;
+  margin-bottom: 0px;
   display: block;
 }
 
@@ -1003,10 +1014,11 @@ h2.extraSpacing {
 
 /*Featured Pages------------------*/
 #featuredPages {
-  background: #f9f9f9;
+  background-color: #37434d;
   padding: 150px 0 120px 0;
   width: 100%;
   max-width: none;
+  color: white;
 }
 
 #featuredPages .wrap {
@@ -1018,31 +1030,43 @@ h2.extraSpacing {
   max-width: 1045px;
 }
 
-#featuredPages .small {
+#featuredPages .small,
+.small--four-col {
   float: left;
-  width: 33%;
+  width: 25%;
   display: none;
+}
+
+.small--four-col {
+  display: block;
 }
 
 #featuredPages img {
   max-width: 100% !important;
+  width: 60px;
   height: auto;
-  margin: 0 auto;
+  margin: 30px auto;
 }
 
 #featuredPages .page p {
   text-align: center;
   font-size: .9em !important;
+  color: currentColor;
 }
 
 #featuredPages .inside {
   margin: 0 15px;
 }
 
+#featuredPages .sectionHead h3 {
+  color: currentColor;
+}
+
 #featuredPages a {
   position: relative;
   display: block;
   text-align: center;
+  color: currentColor;
 }
 
 #featuredPages .title {
@@ -1053,6 +1077,7 @@ h2.extraSpacing {
   width: 100%;
   margin-bottom: 10px;
   display: block;
+  color: currentColor;
 }
 
 #content .page.small img {
@@ -1081,37 +1106,53 @@ h2.extraSpacing {
 }
 
 /*Home Posts ------------------*/
-#homePosts .wrap {
+#homePosts .wrap,
+#blog .wrap {
   margin: 0 15px;
 }
 
-#homePosts .small {
+#homePosts .small,
+#blog .small {
   text-align: left !important;
 }
 
-#homePosts .small .inside {
+#homePosts .small .inside,
+#blog .small .inside {
   padding: 0 0 !important;
 }
 
-#homePosts .small h2 {
+#homePosts .small h2,
+#blog .small h2 {
   font-size: 1.4em;
 }
 
-#homePosts p {
+#homePosts p,
+#blog p {
   font-size: .9em;
 }
 
-#homePosts .small .meta {
+#homePosts .small .meta,
+#blog .small .meta {
   text-align: left !important;
 }
 
-#homePosts .small .moreLink {
+#homePosts .small .moreLink,
+#blog .small .moreLink {
   text-align: left !important;
 }
 
 .homeSection .posts {
   margin: 0 auto;
   max-width: 1045px;
+}
+
+/* Home Contact -------*/
+#contact {
+  background-color: #f1f0f0;
+}
+
+#contact .sectionHead .inside h2 {
+  color: currentColor;
 }
 
 /*Home Content ------------------*/
@@ -1377,6 +1418,7 @@ h2.extraSpacing {
   text-align: center;
   width: 100%;
   position: relative;
+  display: none;
 }
 
 #content #filterNav li {
@@ -2304,8 +2346,8 @@ ol#commentslist {
 //  11 - Footer
 ////////////////////////////////////////////////////////////////////*/
 #footer {
-  color: #7e7d7d;
-  background: #f1f0f0;
+  color: white;
+  background-color: #37434d;
   position: relative;
   z-index: 301;
   padding: 30px 0 30px;
@@ -2323,6 +2365,10 @@ ol#commentslist {
 #footer .inside {
   margin: 0 auto;
   max-width: 1000px;
+}
+
+#footer a {
+  color: #ccc !important;
 }
 
 .footerBox {
@@ -2433,6 +2479,9 @@ ol#commentslist {
 
 /*layouts smaller than 700px, iPhone and mobiles*/
 @media only screen and (max-width: 735px) {
+  #featuredPages .thumbs--four-col .small--four-col {
+    width: 100% !important;
+  }
   html {
     -webkit-text-size-adjust: none;
   }
@@ -2489,6 +2538,13 @@ ol#commentslist {
     background-size: 23px 20px !important;
     right: 20px;
     margin-top: -10px;
+    display: block;
+  }
+  .menu {
+    display: none;
+  }
+  .c-hero__video {
+    display: none !important;
   }
   #pageslide {
     width: 200px !important;
@@ -2572,7 +2628,8 @@ ol#commentslist {
   .homeSection .viewAll .button {
     padding: 10px;
   }
-  #projects.homeSection .sectionHead, #homePosts.homeSection .sectionHead {
+  #projects.homeSection .sectionHead,
+  #homePosts.homeSection .sectionHead {
     text-align: center;
   }
   #homeContent p.big {
@@ -2826,3 +2883,25 @@ ol#commentslist {
   /* Could also use width: 100%; */
   z-index: 1;
 }
+
+.primary ul {
+  text-align: right;
+  margin-top: 10px;
+}
+
+.menu-item {
+  display: inline-block;
+  text-transform: uppercase;
+}
+
+.menu-item a {
+  display: block;
+  margin: 0 10px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.menu-item a:hover {
+  color: white;
+}
+
+/*# sourceMappingURL=style.css.map */

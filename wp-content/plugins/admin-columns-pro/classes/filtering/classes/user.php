@@ -15,13 +15,10 @@ class CAC_Filtering_Model_User extends CAC_Filtering_Model {
 	}
 
 	/**
-	 * Enable filtering
-	 *
-	 * @since 3.5
+	 * @since 3.8
 	 */
-	public function enable_filtering( $columns ) {
-
-		$include_types = array(
+	public function get_filterables() {
+		$column_types = array(
 
 			// WP default columns
 			'email',
@@ -35,14 +32,13 @@ class CAC_Filtering_Model_User extends CAC_Filtering_Model {
 			'column-rich_editing',
 			'column-user_registered',
 			'column-user_url',
-
 		);
 
-		foreach ( $columns as $column ) {
-			if ( in_array( $column->properties->type, $include_types ) ) {
-				$column->set_properties( 'is_filterable', true );
-			}
-		}
+		return $column_types;
+	}
+
+	public function get_default_filterables() {
+		return array( 'role' );
 	}
 
 	/**
@@ -85,19 +81,12 @@ class CAC_Filtering_Model_User extends CAC_Filtering_Model {
 	 * @since 3.7
 	 */
 	public function handle_filter_range_requests( $user_query ) {
-
-		if ( ! isset( $_REQUEST['cpac_filter-min'] ) ) {
-			return $user_query;
-		}
-
-		// Meta query ranged filtering
-		if ( $meta_query = $this->get_meta_query_range( $_REQUEST['cpac_filter-min'], $_REQUEST['cpac_filter-max'] ) ) {
-			$user_query->query_vars['meta_query'] = isset( $user_query->query_vars['meta_query'] ) ? array_merge( $user_query->query_vars['meta_query'], $meta_query ) : $meta_query;
+		if ( isset( $_REQUEST['cpac_filter-min'] ) ) {
+			$user_query->query_vars['meta_query'][] = $this->get_meta_query_range( $_REQUEST['cpac_filter-min'], $_REQUEST['cpac_filter-max'] );
 		}
 
 		return $user_query;
 	}
-
 
 	/**
 	 * Handle filter request
@@ -175,7 +164,6 @@ class CAC_Filtering_Model_User extends CAC_Filtering_Model {
 						array(
 							'key'     => 'rich_editing',
 							'value'   => '1' === $value ? 'true' : 'false',
-							'compare' => '='
 						)
 					);
 					break;
@@ -190,20 +178,13 @@ class CAC_Filtering_Model_User extends CAC_Filtering_Model {
 
 				// Custom Fields
 				case 'column-meta' :
-					$user_query->query_vars['meta_query'][] = array(
-						array(
-							'key'     => $column->options->field,
-							'value'   => $meta_value,
-							'compare' => $meta_query_compare
-						)
-					);
+					$user_query->query_vars['meta_query'][] = $this->get_meta_query( $column->get_field_key(), $value, $column->get_option( 'field_type' ) );
 					break;
 
 				// ACF
 				case 'column-acf_field' :
 					if ( method_exists( $column, 'get_field_key' ) ) {
-						$meta_query = $this->get_meta_acf_query( $column->get_field_key(), $meta_value, $column->get_field_type(), $column->get_option( 'filter_format' ) );
-						$vars['meta_query'] = isset( $vars['meta_query'] ) ? array_merge( $vars['meta_query'], $meta_query ) : $meta_query;
+						$user_query->query_vars['meta_query'][] = $this->get_meta_acf_query( $column->get_field_key(), $value, $column->get_field_type(), $column->get_option( 'filter_format' ) );
 					}
 					break;
 
@@ -215,7 +196,6 @@ class CAC_Filtering_Model_User extends CAC_Filtering_Model {
 					}
 
 			endswitch;
-
 		}
 
 		return $user_query;
@@ -249,10 +229,10 @@ class CAC_Filtering_Model_User extends CAC_Filtering_Model {
 	 *
 	 * @since 3.5
 	 */
-	public function get_values_by_meta_key( $meta_key ) {
+	public function get_values_by_meta_key( $meta_key, $operator = 'DISTINCT meta_value AS value' ) {
 
 		$sql = "
-			SELECT DISTINCT meta_value AS value
+			SELECT {$operator}
 			FROM {$this->wpdb->usermeta} um
 			INNER JOIN {$this->wpdb->users} u ON um.user_id = u.ID
 			WHERE um.meta_key = %s

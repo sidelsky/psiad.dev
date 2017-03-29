@@ -13,12 +13,11 @@ class CAC_Sortable_Model_Post extends CAC_Sortable_Model {
 
 	public function init_hooks() {
 		add_filter( 'request', array( $this, 'handle_sorting_request' ), 1 );
-		add_filter( "manage_edit-{$this->storage_model->key}_sortable_columns", array( $this, 'add_sortable_headings' ) );
+		add_filter( "manage_" . $this->storage_model->get_screen_id() . "_sortable_columns", array( $this, 'add_sortable_headings' ) );
 		add_action( 'restrict_manage_posts', array( $this, 'add_reset_button' ) );
 	}
 
 	public function is_hierarchical_display( $orderby ) {
-
 		return is_post_type_hierarchical( $this->storage_model->get_post_type() ) && $this->default_orderby == $orderby;
 	}
 
@@ -43,7 +42,6 @@ class CAC_Sortable_Model_Post extends CAC_Sortable_Model {
 			'author',
 			'categories',
 			'tags',
-			'title',
 
 			// Custom Columns
 			'column-attachment',
@@ -118,7 +116,34 @@ class CAC_Sortable_Model_Post extends CAC_Sortable_Model {
 			'expiry_date',
 		);
 
-		return $column_names;
+		return array_merge( $column_names, (array) $this->get_default_sortables() );
+	}
+
+	/**
+	 * Columns that are sortable by WordPress core
+	 *
+	 * @since 3.8
+	 */
+	public function get_default_sortables() {
+		$columns = array(
+
+			// WordPress
+			'date',
+			'title',
+
+			// WC Order
+			'order_total',
+			'order_date',
+			//'order_title',
+
+			// WC Product
+			'name',
+			'sku',
+			'price',
+			'featured'
+		);
+
+		return $columns;
 	}
 
 	/**
@@ -151,6 +176,10 @@ class CAC_Sortable_Model_Post extends CAC_Sortable_Model {
 			return $_vars;
 		}
 
+		if ( ! $this->is_sortable( $column ) ) {
+			return $_vars;
+		}
+
 		$show_all_results = $this->get_show_all_results();
 
 		// Set posts args when user selected a specific post status
@@ -174,6 +203,10 @@ class CAC_Sortable_Model_Post extends CAC_Sortable_Model {
 			case 'categories' :
 				$sort_flag = SORT_NUMERIC;
 				$posts = $this->get_posts_sorted_by_taxonomy( 'category' );
+				break;
+
+			case 'date' :
+				// Needs to be here, otherwise default sorting is not working for date
 				break;
 
 			case 'tags' :
@@ -335,12 +368,12 @@ class CAC_Sortable_Model_Post extends CAC_Sortable_Model {
 
 			case 'column-taxonomy' :
 				$sort_flag = SORT_NUMERIC;
-				$posts = $this->get_posts_sorted_by_taxonomy( $column->options->taxonomy );
+				$posts = $this->get_posts_sorted_by_taxonomy( $column->get_option( 'taxonomy' ) );
 				break;
 
 			case 'column-author_name' :
 				$sort_flag = SORT_STRING;
-				if ( 'userid' == $column->options->display_author_as ) {
+				if ( 'userid' == $column->get_option( 'display_author_as' ) ) {
 					$sort_flag = SORT_NUMERIC;
 				}
 				break;
@@ -362,25 +395,21 @@ class CAC_Sortable_Model_Post extends CAC_Sortable_Model {
 
 			// Custom Field
 			case 'column-meta' :
-
-				$result = $this->get_meta_items_for_sorting( $column, $post_args );
-
-				if ( $result ) {
+				if ( $result = $this->get_meta_items_for_sorting( $column, $post_args ) ) {
 					$posts = $result['items'];
 					$sort_flag = $result['sort_flag'];
 				}
-				else {
-					$is_type_numeric = in_array( $column->options->field_type, array(
-						'numeric',
-						'library_id',
-						'count'
-					) );
-					$vars = array_merge( $vars, array(
-						'meta_key' => $column->get_field_key(),
-						'orderby'  => $is_type_numeric ? 'meta_value_num' : 'meta_value'
-					) );
-				}
 
+				// No sorted items and show_all_results is 'false'
+				else {
+					$vars['meta_query'][] = array(
+						'key'     => $column->get_field_key(),
+						'type'    => in_array( $column->get_option( 'field_type' ), array( 'numeric', 'library_id', 'count' ) ) ? 'NUMERIC' : 'CHAR',
+						'compare' => '!=',
+						'value'   => ''
+					);
+					$vars['orderby'] = $column->get_field_key();
+				}
 				break;
 
 			// ACF
@@ -388,18 +417,12 @@ class CAC_Sortable_Model_Post extends CAC_Sortable_Model {
 
 				// make sure acf has not been deactivated in the meanwhile...
 				if ( method_exists( $column, 'get_field' ) ) {
-					$field = $column->get_field();
-					$sort_flag = in_array( $field['type'], array( 'date_picker', 'number', 'date_time_picker' ) ) ? SORT_NUMERIC : SORT_REGULAR;
-
-					foreach ( $this->get_posts( $post_args ) as $id ) {
-						$value = $column->get_sorting_value( $id );
-
-						if ( $value || $show_all_results ) {
-							$posts[ $id ] = $this->prepare_sort_string_value( $value );
-						}
+					$is_sortable = $this->set_acf_sorting_vars( $column, $vars );
+					if ( ! $is_sortable ) {
+						$sort_flag = SORT_REGULAR;
+						$posts = $this->get_acf_sorting_data( $column, $this->get_posts( $post_args ) );
 					}
 				}
-
 				break;
 
 			// WooCommerce
@@ -418,7 +441,7 @@ class CAC_Sortable_Model_Post extends CAC_Sortable_Model {
 				foreach ( $this->get_posts( $post_args ) as $id ) {
 					$parent_id = $column->get_raw_value( $id );
 					if ( $parent_id || $show_all_results ) {
-						$posts[ $id ] = $this->get_post_title( $parent_id );
+						$posts[ $id ] = $column->get_post_title( $parent_id );
 					}
 				}
 				break;
@@ -505,16 +528,19 @@ class CAC_Sortable_Model_Post extends CAC_Sortable_Model {
 							$posts[ $id ] = $value;
 						}
 					}
-				} // @since 2.0.3
+				}
+
+				// @since 2.0.3
 				else if ( method_exists( $column, 'get_raw_value' ) ) {
 					foreach ( $this->get_posts( $post_args ) as $id ) {
 						$value = $column->get_raw_value( $id );
-
 						if ( $value || $show_all_results ) {
 							$posts[ $id ] = $value;
 						}
 					}
+
 				}
+
 
 		endswitch;
 

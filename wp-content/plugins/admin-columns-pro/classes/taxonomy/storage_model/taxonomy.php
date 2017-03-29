@@ -3,7 +3,6 @@
 class CPAC_Storage_Model_Taxonomy extends CPAC_Storage_Model {
 
 	public $taxonomy;
-	public $taxonomy_object;
 
 	/**
 	 * Constructor
@@ -12,15 +11,13 @@ class CPAC_Storage_Model_Taxonomy extends CPAC_Storage_Model {
 	 */
 	function __construct( $taxonomy ) {
 
-		$this->set_taxonomy_object( $taxonomy );
-
 		$this->key = 'wp-taxonomy_' . $taxonomy;
 		$this->type = 'taxonomy';
 		$this->page = 'edit-tags';
 		$this->taxonomy = $taxonomy;
-		$this->label = $this->taxonomy_object->labels->name;
-		$this->singular_label = $this->taxonomy_object->labels->singular_name;
-		$this->menu_type = $this->type;
+		$this->menu_type = __( 'Taxonomy', 'codepress-admin-columns' );
+
+		$this->set_labels();
 
 		parent::__construct();
 	}
@@ -30,18 +27,24 @@ class CPAC_Storage_Model_Taxonomy extends CPAC_Storage_Model {
 	 */
 	public function init_manage_columns() {
 		add_filter( "manage_edit-{$this->taxonomy}_columns", array( $this, 'add_headings' ) );
-		add_action( "manage_{$this->taxonomy}_custom_column", array( $this, 'manage_value' ), 10, 3 );
+		add_filter( "manage_{$this->taxonomy}_custom_column", array( $this, 'manage_value' ), 10, 3 );
 	}
 
 	/**
-	 * Get taxonomy
-	 *
-	 * @since 3.5
-	 *
-	 * @return string Taxonomy name
+	 * @since 2.7.3
 	 */
-	public function set_taxonomy_object( $taxonomy ) {
-		$this->taxonomy_object = get_taxonomy( $taxonomy );
+	private function set_labels() {
+		$taxonomy = get_taxonomy( $this->taxonomy );
+		$this->label =$taxonomy->labels->name;
+		$this->singular_label =$taxonomy->labels->singular_name;
+	}
+
+	/**
+	 * @since 3.7.3
+	 */
+	public function is_current_screen() {
+		$taxonomy = isset( $_GET['taxonomy'] ) ? $_GET['taxonomy'] : '';
+		return ( $this->taxonomy === $taxonomy ) && parent::is_current_screen();
 	}
 
 	/**
@@ -155,5 +158,4 @@ class CPAC_Storage_Model_Taxonomy extends CPAC_Storage_Model {
 
 		return $value;
 	}
-
 }

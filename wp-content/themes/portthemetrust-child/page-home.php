@@ -11,15 +11,22 @@ Template Name: Home
         get_template_part( 'part-about-home');
         ?>
         
+        <?php
+        // Projects section
+        get_template_part( 'part-projects-home'); ?>
 
-        <?php get_template_part( 'part-projects-home'); //projects section ?>
-
-        <?php get_template_part( 'part-featured-pages'); //featured pages section ?>
+        <?php
+        // Featured pages section
+        get_template_part( 'part-featured-pages'); ?>
         
-        <?php get_template_part( 'part-posts-home'); //posts section ?>
+        <?php
+        // Posts section
+        get_template_part( 'part-posts-home'); ?>
 
-        <?php while (have_posts()) : the_post(); //home content section ?>	
-            <?php if($post->post_content):?>
+        <?php 
+            // Home content section - Gets content from HOME page
+            while (have_posts()) : the_post(); ?>	
+            <?php if($post->post_content) :?>
 
             <?php $home_content_bkg = of_get_option('ttrust_home_content_bkg'); ?>
                 <div id="homeContent" class="full homeSection clearfix <?php if($home_content_bkg) echo "hasBackground"; ?>">	
@@ -31,7 +38,14 @@ Template Name: Home
             <?php endif; ?>
         <?php endwhile; ?>
 
-        <?php get_template_part( 'part-testimonials-home'); //testimonials section ?>
+        <?php
+        // Testimonials section
+        get_template_part( 'part-testimonials-home'); ?>
+
+        <?php
+        // Contact section
+        //get_template_part( 'part-contact-home');
+        ?>
 
     </div>
 </div>

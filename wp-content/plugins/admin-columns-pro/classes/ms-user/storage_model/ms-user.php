@@ -14,7 +14,6 @@ class CPAC_Storage_Model_MS_User extends CPAC_Storage_Model {
 		$this->type = 'user';
 		$this->meta_type = 'user';
 		$this->page = 'users';
-		$this->menu_type = 'other';
 
 		parent::__construct();
 	}
@@ -25,6 +24,13 @@ class CPAC_Storage_Model_MS_User extends CPAC_Storage_Model {
 	public function init_manage_columns() {
 		add_filter( "wpmu_users_columns", array( $this, 'add_headings' ), 100 );
 		add_filter( 'manage_users_custom_column', array( $this, 'manage_value_callback' ), 100, 3 );
+	}
+
+	/**
+	 * @since 3.7.3
+	 */
+	public function is_current_screen() {
+		return is_network_admin() && parent::is_current_screen();
 	}
 
 	/**
@@ -57,7 +63,7 @@ class CPAC_Storage_Model_MS_User extends CPAC_Storage_Model {
 		$table = _get_list_table( 'WP_MS_Users_List_Table', array( 'screen' => 'users' ) );
 		$columns = (array) $table->get_columns();
 
-		if ( cac_is_settings_screen() ) {
+		if ( cac_is_setting_screen() ) {
 			$columns = array_merge( get_column_headers( 'users' ), $columns );
 		}
 

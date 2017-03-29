@@ -56,6 +56,7 @@ function projectFilterInit() {
 
 function isotopeInit() {
 	setColumns();
+	//setFourColumns();
 	$grid.isotope({
 		resizable: false,
 		layoutMode: 'fitRows',
@@ -65,12 +66,36 @@ function isotopeInit() {
 	});
 
 	jQuery(".thumbs .small").css("visibility", "visible");
+	
 
 }
 
 ///////////////////////////////
 // Isotope Grid Resize
 ///////////////////////////////
+
+// Set four columns;
+function setFourColumns() {
+	
+	var columns;
+	var gw = $grid.width();
+
+	if(gw<=735){
+		columns = 1;
+	} else {
+		columns = 4;
+	}
+
+	colW = Math.floor(gw / columns);
+
+	jQuery('.thumbs--four-col, .small--four-col').each(function(id){
+		jQuery(this).css('width',colW+'px');
+	});
+	
+	jQuery('.thumbs--four-col, .small--four-col').show();
+
+};
+
 
 function setColumns()
 {
@@ -88,8 +113,11 @@ function setColumns()
 	jQuery('.thumbs .small').show();
 }
 
+
+
 function gridResize() {
 	setColumns();
+	//setFourColumns();
 	$grid.isotope({
 		resizable: false,
 		layoutMode: 'fitRows',
@@ -171,6 +199,65 @@ function setHeaderBackground() {
 }
 
 
+// Scroll to content 
+function arrowDownScrollTo() {
+
+	jQuery.extend(jQuery.easing, {
+		def: 'easeInOutQuart',
+		easeInOutQuart: function(x, t, b, c, d) {
+			if ((t /= d / 2) < 1) return c / 2 * t * t * t * t + b;
+			return -c / 2 * ((t -= 2) * t * t * t - 2) + b;
+		}
+	});
+
+	var $button = jQuery('#downButton'),
+		$content = jQuery('#content'),
+		$doc = jQuery('html, body'),
+		speed = 1000;
+
+	$button.on('click', function(){
+		$doc.animate({
+        	scrollTop: $content.offset().top - 83
+    	}, speed, 'easeInOutQuart');
+	});
+
+}
+
+
+
+		function do_scrollTo() {
+
+            jQuery.extend(jQuery.easing, {
+              def: 'easeInOutQuart',
+                easeInOutQuart: function (x, t, b, c, d) {
+                  if ((t /= d / 2) < 1) return c / 2 * t * t * t * t + b;
+                  return -c / 2 * ((t -= 2) * t * t * t - 2) + b;
+                }
+              });
+
+		  jQuery('a[href*=\\#]:not([href=\\#])').on('click',function (e) {
+		    e.preventDefault();
+
+		    var target = this.hash;
+		    $target = jQuery(target);
+
+		    jQuery('html, body').stop().animate({
+		      'scrollTop': $target.offset().top - 63
+          }, 800, 'easeInOutQuart');
+		  });
+		}
+
+        
+function historyBack() {
+	
+	var $back = jQuery('#back, #sideBack');
+
+	$back.click(function(){
+		parent.history.back();
+		return false;
+	});
+}
+
 ///////////////////////////////
 // Initialize
 ///////////////////////////////
@@ -182,6 +269,9 @@ jQuery(document).ready(function(){
 		setStickyNavOffset();
 		isotopeInit();
 		projectFilterInit();
+		arrowDownScrollTo();
+		historyBack();
+		do_scrollTo();
 		if(jQuery('body').hasClass('home')){
 			setHomeBannerHeight();
 			centerHomeBannerText();

@@ -1,26 +1,15 @@
 <?php
 
 /**
- * Filtering Model for Posts ánd Media!
- *
  * @since 3.5
  */
-class CAC_Filtering_Model_Media extends CAC_Filtering_Model {
-
-	public function init_hooks() {
-		add_filter( 'request', array( $this, 'handle_filter_requests' ), 2 );
-		add_filter( 'request', array( $this, 'handle_filter_range_requests' ), 2 );
-		add_action( 'restrict_manage_posts', array( $this, 'add_filtering_markup' ) );
-	}
+class CAC_Filtering_Model_Media extends CAC_Filtering_Model_Post_Object {
 
 	/**
-	 * Enable filtering
-	 *
-	 * @since 3.5
+	 * @since 3.8
 	 */
-	public function enable_filtering( $columns ) {
-
-		$include_types = array(
+	public function get_filterables() {
+		$column_types = array(
 
 			// WP default columns
 			'author',
@@ -34,11 +23,7 @@ class CAC_Filtering_Model_Media extends CAC_Filtering_Model {
 			'column-taxonomy',
 		);
 
-		foreach ( $columns as $column ) {
-			if ( in_array( $column->properties->type, $include_types ) ) {
-				$column->set_properties( 'is_filterable', true );
-			}
-		}
+		return $column_types;
 	}
 
 	/**
@@ -58,25 +43,6 @@ class CAC_Filtering_Model_Media extends CAC_Filtering_Model {
 	}
 	public function filter_by_description( $where ) {
 		return $where . $this->wpdb->prepare( "AND {$this->wpdb->posts}.post_content = %s", $this->get_filter_value( 'column-description' ) );
-	}
-
-	/**
-	 * Handle filter request for ranges
-	 *
-	 * @since 3.7
-	 */
-	public function handle_filter_range_requests( $vars ) {
-
-		if ( ! isset( $_REQUEST['cpac_filter-min'] ) ) {
-			return $vars;
-		}
-
-		// Meta query ranged filtering
-		if ( $meta_query = $this->get_meta_query_range( $_REQUEST['cpac_filter-min'], $_REQUEST['cpac_filter-max'] ) ) {
-			$vars['meta_query'] = isset( $vars['meta_query'] ) ? array_merge( $vars['meta_query'], $meta_query ) : $meta_query;
-		}
-
-		return $vars;
 	}
 
 	/**
@@ -103,13 +69,9 @@ class CAC_Filtering_Model_Media extends CAC_Filtering_Model {
 			}
 
 			// add the value to so we can use it in the 'post_where' callback
-			$this->set_filter_value( $column->properties->type, $value );
+			$this->set_filter_value( $column->get_type(), $value );
 
-			// meta arguments
-			$meta_value 		= in_array( $value, array( 'cpac_empty', 'cpac_not_empty' ) ) ? '' : $value;
-			$meta_query_compare = 'cpac_not_empty' == $value ? '!=' : '=';
-
-			switch ( $column->properties->type ) :
+			switch ( $column->get_type() ) :
 
 				// WP Default
 				case 'author' :
@@ -141,24 +103,19 @@ class CAC_Filtering_Model_Media extends CAC_Filtering_Model {
 					break;
 
 				case 'column-taxonomy' :
-					$vars['tax_query'] = $this->get_taxonomy_tax_query( $value, $column->options->taxonomy, $vars );
+					$vars['tax_query']['relation'] = 'AND';
+					$vars['tax_query'][] = $this->get_taxonomy_query( $value, $column->get_option( 'taxonomy' ) );
 					break;
-
 
 				// Custom Fields
 				case 'column-meta' :
-					$vars['meta_query'][] = array(
-						'key'		=> $column->options->field,
-						'value' 	=> $meta_value,
-						'compare'	=> $meta_query_compare
-					);
+					$vars['meta_query'][] = $this->get_meta_query( $column->get_field_key(), $value, $column->get_option( 'field_type' ) );
 					break;
 
 				// ACF
 				case 'column-acf_field' :
 					if ( method_exists( $column, 'get_field_key' ) ) {
-						$meta_query = $this->get_meta_acf_query( $column->get_field_key(), $meta_value, $column->get_field_type(), $column->get_option( 'filter_format' ) );
-						$vars['meta_query'] = isset( $vars['meta_query'] ) ? array_merge( $vars['meta_query'], $meta_query ) : $meta_query;
+						$vars['meta_query'][] = $this->get_meta_acf_query( $column->get_field_key(), $value, $column->get_field_type(), $column->get_option( 'filter_format' ) );
 					}
 					break;
 
@@ -197,9 +154,8 @@ class CAC_Filtering_Model_Media extends CAC_Filtering_Model {
 				break;
 
 			case 'comments' :
-				$top_label = __( 'All comments', 'codepress-admin-columns' );
 				$options = array(
-					0 => __( 'No comments', 'capc' ),
+					'' => __( 'No comments', 'capc' ),
 					1 => __( 'Has comments', 'capc' ),
 				);
 				break;
@@ -234,11 +190,9 @@ class CAC_Filtering_Model_Media extends CAC_Filtering_Model {
 				break;
 
 			case 'column-taxonomy' :
-				if ( taxonomy_exists( $column->options->taxonomy ) ) {
+				if ( taxonomy_exists( $column->get_option( 'taxonomy' ) ) ) {
 					$empty_option = true;
-					$order = false; // do not sort, messes up the indenting
-					$terms_args = apply_filters( 'cac/addon/filtering/taxonomy/terms_args', array() );
-					$options = $this->apply_indenting_markup( $this->indent( get_terms( $column->options->taxonomy, $terms_args ), 0, 'parent', 'term_id' ) );
+					$options = $this->apply_indenting_markup( $this->get_terms_by_post_type( $column->get_option( 'taxonomy' ), $column->get_post_type() ) );
 				}
 				break;
 

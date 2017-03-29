@@ -6,6 +6,7 @@
 	<title><?php bloginfo('name'); ?> <?php wp_title(); ?></title>
 	<meta name="viewport" content="width=device-width, initial-scale = 1.0, maximum-scale=1.0, user-scalable=no" />
 	<link href='http://fonts.googleapis.com/css?family=PT+Sans' rel='stylesheet' type='text/css'>
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans:300" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif:regular,bold" />
 	<?php $menu_font = of_get_option('ttrust_menu_font'); ?>
 	<?php $heading_font = of_get_option('ttrust_heading_font'); ?>
@@ -56,17 +57,33 @@
 	<?php $ttrust_menu_type = of_get_option('ttrust_menu_type'); ?>
 	<?php if($ttrust_menu_type != "standard"): ?>
 		<div id="pageslide">
-		<div id="slideNav" class="panel">
-			<a href="javascript:jQuery.pageslide.close()" class="closeBtn"></a>								
-			<div id="mainNav">
-				<?php wp_nav_menu( array('menu_class' => '', 'theme_location' => 'main', 'fallback_cb' => 'default_nav_slide' )); ?>
+			<div id="slideNav" class="panel">
+				
+				<a href="javascript:jQuery.pageslide.close()" class="closeBtn"></a>	
+
+				<div id="mainNav">
+					<?php 
+					if( is_front_page() ) {
+					wp_nav_menu( array(
+					'menu_class' => '',
+					'theme_location' => 'main',
+					'fallback_cb' => 'default_nav_slide'
+					));
+					} else {
+					echo '<div class="zprimary"><ul class="zmenu"><li class="zmenu-item"><a href="#" id="sideBack">';
+					echo '< Back';
+					echo '</a></li></ul></div>';
+				} ?>
+				</div>
+
+				<?php if(is_active_sidebar('sidebar_slidenav')) : ?>
+
+				<div class="widgets">
+					<?php dynamic_sidebar('sidebar_slidenav'); ?>
+				</div>
+
+				<?php endif; ?>			
 			</div>
-			<?php if(is_active_sidebar('sidebar_slidenav')) : ?>
-			<div class="widgets">
-				<?php dynamic_sidebar('sidebar_slidenav'); ?>
-			</div>
-			<?php endif; ?>			
-		</div>
 		</div>
 	<?php endif; ?>
 <div id="container">	
@@ -83,7 +100,34 @@
 			<?php endif; ?>	
 			</div>			
 			
-			<a href="#slideNav" class="menuToggle"></a>				
+			<a href="#slideNav" class="menuToggle"></a>
+
+			<?php 
+				if( is_front_page() ) {
+				wp_nav_menu( array(
+				'menu'            => 'Menu 1', 
+				'container'       => 'div',
+				'container_class' => 'primary', 
+				//'container_id'    => 'menuContainer',
+				//'menu_id'         => 'menu',
+				//'theme_location'  => 'Primary Menu',
+				//'menu_class'      => 'four coloumns', 
+				//'echo'            => true,
+				//'fallback_cb'     => 'wp_page_menu',
+				//'before'          => ,
+				//'after'           => ,
+				//'link_before'     => ,
+				//'link_after'      => ,
+				//'items_wrap'      => '<ul id="%1$s" class="%2$s">%3$s</ul>',
+				//'depth'           => 0,
+				//'walker'          =>  
+			)); 
+			} else {
+				echo '<div class="primary"><ul class="menu"><li class="menu-item"><a href="#" id="back">';
+				echo '< Back';
+				echo '</a></li></ul></div>';
+			}
+			?>
 			
 		</div>		
 	</div>

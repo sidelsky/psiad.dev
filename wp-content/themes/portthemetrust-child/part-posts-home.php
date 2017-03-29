@@ -1,7 +1,7 @@
 <?php $recent_posts_count = intval(of_get_option('ttrust_recent_posts_count')); ?>
 <?php $recent_posts_title = of_get_option('ttrust_recent_posts_title'); ?>
 <?php if($recent_posts_count > 0) : ?>
-<div id="homePosts" class="full homeSection clearfix">			
+<div id="blog" class="full homeSection clearfix">			
 
 	<?php if($recent_posts_title):?>
 	<div class="sectionHead">

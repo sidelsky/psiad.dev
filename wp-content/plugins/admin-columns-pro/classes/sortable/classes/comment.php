@@ -9,7 +9,7 @@ class CAC_Sortable_Model_Comment extends CAC_Sortable_Model {
 
 	public function init_hooks() {
 		add_filter( 'comments_clauses', array( $this, 'handle_sorting_request' ), 10, 2 );
-		add_filter( "manage_edit-comments_sortable_columns", array( $this, 'add_sortable_headings' ) );
+		add_filter( "manage_" . $this->storage_model->get_screen_id() . "_sortable_columns", array( $this, 'add_sortable_headings' ) );
 		add_action( 'restrict_manage_comments', array( $this, 'add_reset_button' ) );
 	}
 
@@ -20,7 +20,7 @@ class CAC_Sortable_Model_Comment extends CAC_Sortable_Model {
 	}
 
 	/**
-	 * Get sortables
+	 * Get custom sortables
 	 *
 	 * @see CAC_Sortable_Model::get_sortables()
 	 * @since 1.0
@@ -50,7 +50,21 @@ class CAC_Sortable_Model_Comment extends CAC_Sortable_Model {
 			'column-reply_to',
 		);
 
-		return $column_names;
+		return array_merge( $column_names, (array) $this->get_default_sortables() ) ;
+	}
+
+	/**
+	 * Columns that are sortable by WordPress core
+	 *
+	 * @since 3.8
+	 */
+	public function get_default_sortables() {
+		$columns = array(
+			'author',
+			'response',
+			'date'
+		);
+		return $columns;
 	}
 
 	/**
@@ -73,11 +87,12 @@ class CAC_Sortable_Model_Comment extends CAC_Sortable_Model {
 		$vars = $this->apply_sorting_preference( $vars );
 
 		$column = $this->get_column_by_orderby( $vars['orderby'] );
+
 		if ( empty( $column ) ) {
 			return $pieces;
 		}
 
-		switch ( $column->properties->type ) :
+		switch ( $column->get_type() ) :
 
 			// WP Default Columns
 			case 'comment' :
@@ -90,6 +105,7 @@ class CAC_Sortable_Model_Comment extends CAC_Sortable_Model {
 				break;
 
 			case 'column-author' :
+			case 'author' :
 				$pieces['orderby'] = 'comment_author';
 				break;
 
@@ -110,6 +126,7 @@ class CAC_Sortable_Model_Comment extends CAC_Sortable_Model {
 				break;
 
 			case 'column-reply_to' :
+			case 'response' :
 				$pieces['orderby'] = 'comment_parent';
 				break;
 
@@ -138,6 +155,7 @@ class CAC_Sortable_Model_Comment extends CAC_Sortable_Model {
 				break;
 
 			case 'column-date_gmt' :
+			case 'date' :
 				$pieces['orderby'] = 'comment_date_gmt'; // this the default for Comment Query
 				break;
 
@@ -145,13 +163,15 @@ class CAC_Sortable_Model_Comment extends CAC_Sortable_Model {
 				global $wpdb;
 				$pieces['join'] = $pieces['join'] . " JOIN $wpdb->commentmeta cm ON $wpdb->comments.comment_ID = cm.comment_id";
 				$pieces['orderby'] = "cm.meta_value";
-				$pieces['where'] = $pieces['where'] . $wpdb->prepare( " AND cm.meta_key=%s", $column->options->field );
+				$pieces['where'] = $pieces['where'] . $wpdb->prepare( " AND cm.meta_key=%s", $column->get_option( 'field' ) );
 				break;
 
 		endswitch;
 
-		// set order
-		$pieces['orderby'] .= ' ' . $vars['order'];
+		// set order. make sure the order hasn't already been set
+		if ( false === strpos( $pieces['orderby'], $vars['order'] ) ) {
+			$pieces['orderby'] .= ' ' . $vars['order'];
+		}
 
 		return $pieces;
 	}

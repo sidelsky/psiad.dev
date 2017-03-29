@@ -22,16 +22,8 @@
 
         <?php
             echo '<h2>' . get_post_field('post_title', $page_ID) . '</h2>';
-            echo get_post_field('post_content', $page_ID);
+            echo '<p class="ers-intro">' . get_post_field('post_content', $page_ID) . '</p>';
         ?>
-
-        <?php
-        // View all button
-        if($page_ID == 36) : ?>
-            <div class="viewAll">
-                <a href="<?php echo get_permalink($page_ID); ?>" class="button"><?php echo of_get_option('ttrust_projects_button_label'); ?></a>
-            </div>
-        <?php endif; ?>	
 
     </div>
 </div>

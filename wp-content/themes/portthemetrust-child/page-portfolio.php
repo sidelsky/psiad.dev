@@ -18,8 +18,8 @@ Template Name: Portfolio
 <?php endif; ?>
 
 <div id="middle" class="clearfix">
-<div id="content" class="full">
-<?php get_template_part( 'part-projects'); ?>
-</div>
+	<div id="content" class="full">
+		<?php get_template_part( 'part-projects'); ?>
+	</div>
 </div>
 <?php get_footer(); ?>

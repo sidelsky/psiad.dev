@@ -14,7 +14,7 @@ class CACIE_Editable_Model_Comment extends CACIE_Editable_Model {
 	/**
 	 * @since 3.5
 	 */
-	protected function get_list_selector() {
+	public function get_list_selector() {
 		return '#the-comment-list';
 	}
 
@@ -165,7 +165,7 @@ class CACIE_Editable_Model_Comment extends CACIE_Editable_Model {
 			}
 
 			$columndata = array();
-			foreach ( $this->storage_model->columns as $column_name => $column ) {
+			foreach ( $this->storage_model->get_columns() as $column_name => $column ) {
 				if ( ! $this->is_edit_enabled( $column ) ) {
 					continue;
 				}
@@ -279,7 +279,7 @@ class CACIE_Editable_Model_Comment extends CACIE_Editable_Model {
 			return;
 		}
 
-		$editable = $this->get_editable( $column->properties->name );
+		$editable = $this->get_editable( $column->get_name() );
 
 		switch ( $column->properties->type ) {
 

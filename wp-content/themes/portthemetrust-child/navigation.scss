@@ -1,0 +1,25 @@
+.primary {
+
+    ul {
+        text-align: right;
+        margin-top: 10px;
+    }
+
+}
+
+.menu-item {
+        display: inline-block;
+        text-transform: uppercase;
+    a {
+        display: block;
+        margin: 0 10px;
+        color: rgba(255,255,255, 0.7);
+
+        // Hover
+        &:hover {
+             color: rgba(255,255,255, 1);
+        }
+        
+    }
+
+}
