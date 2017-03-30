@@ -258,6 +258,8 @@ function historyBack() {
 	});
 }
 
+
+
 ///////////////////////////////
 // Initialize
 ///////////////////////////////
@@ -310,3 +312,56 @@ jQuery(document).ready(function(){
 	jQuery('img').attr('title','');
 	jQuery("#content").fitVids();
 });
+
+
+var myButton = document.getElementById('myButton'),
+	myContainer = document.getElementById('myContainer'),
+	spinner = document.getElementById('spinner'),
+	url = 'http://psiad.dev/wp-json/wp/v2/posts';
+
+	if( myButton ) {
+		myButton.addEventListener('click', function(){
+			
+			var ourRequest = new XMLHttpRequest();
+
+			ourRequest.open( 'GET', url );
+
+			ourRequest.onload = function() {
+				if( ourRequest.status >= 200 && ourRequest.status < 400 ) {
+					var data = JSON.parse(ourRequest.responseText);
+					//console.log( data );
+					createHTML( data, showSpinner() );
+				} else {
+					document.write('Error!');
+				}
+			};
+
+			ourRequest.onerror = function() {
+				console.log('Connection Error!');
+			};
+
+			ourRequest.send();
+
+		});
+	}
+
+// Show spinner
+function showSpinner() {
+	spinner.style.display = 'block';
+	
+	setTimeout( function removeButton(){
+		myButton.remove();
+	}, 1000);
+
+}
+
+function createHTML( postsData ) {
+	
+	var ourHTMLString = '';
+	
+	for( i=0; i < postsData.length; i++ ) {
+		ourHTMLString += '<h2>' + postsData[i].title.rendered + '</h2>';
+		ourHTMLString += postsData[i].content.rendered;
+	}
+	myContainer.innerHTML = ourHTMLString;
+}

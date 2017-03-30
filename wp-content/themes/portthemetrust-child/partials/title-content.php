@@ -21,10 +21,33 @@
         ?>
 
         <?php
-            echo '<h2>' . get_post_field('post_title', $page_ID) . '</h2>';
-            echo '<p class="ers-intro">' . get_post_field('post_content', $page_ID) . '</p>';
+            $title_content = get_post_field('post_title', $page_ID);
+            $post_content = get_post_field('post_content', $page_ID);
+
+            if( $title_content ) {
+                echo '<h2>' . $title_content . '</h2>';
+            }
+
+            if( $post_content ) {
+                echo '<p class="ers-intro">' . $post_content . '</p>';
+            }
         ?>
 
     </div>
 </div>
 
+<button id="myButton" class="button">
+    <div id="spinner" style="display:none; background-image: url('https://i.stack.imgur.com/h6viz.gif'); background-position: center center; width: 100%; height: 30px"></div>Click me fool</button>
+<div id="myContainer"></div>
+
+<?php
+    // Object
+    // $object = new stdClass;
+    // $object->names = ['Errol', 'Bob', 'Trevor'];
+
+    // //echo $object->name;
+    // foreach($object->names as $name) {
+    //     //echo $name . '<br>';
+    // } 
+
+?>
