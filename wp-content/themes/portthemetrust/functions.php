@@ -682,7 +682,7 @@ function register_testimonials() {
 			'show_in_menu' => true,
 			'show_in_nav_menus' => false,
 			'menu_position ' => 20,
-			'supports' => array( 'title', 'editor', 'thumbnail', 'revisions' ),
+			'supports' => array( 'title', 'editor', 'thumbnail', 'revisions', 'excerpt' ),
 			'hierarchical' => false,
 			'has_archive' => true,
 			'rewrite' => 'testimonial'

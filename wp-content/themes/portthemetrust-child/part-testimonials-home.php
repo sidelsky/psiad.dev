@@ -28,10 +28,17 @@
 
 			while ($testimonials->have_posts()) : $testimonials->the_post(); ?>			    
 			<div <?php post_class('small'); ?>>		
-				<div class="inside">		
+				<div class="inside">
+				<a href="<?php the_permalink(); ?>" rel="bookmark" >			
 					<?php the_post_thumbnail("ttrust_square_medium", array('class' => '', 'alt' => ''.get_the_title().'', 'title' => ''.get_the_title().'')); ?>						
+				</a>
 					<span class="title"><span><?php the_title(); ?></span></span>
-					<?php the_content(); ?>	
+					<?php the_excerpt(); ?>	
+				<p class="moreLink">
+					<a href="<?php the_permalink(); ?>" title="<?php the_title(); ?>">
+						<span>Read More</span>
+					</a>
+				</p>
 				</div>		
 			</div>
 			<?php endwhile; ?>		

@@ -36,9 +36,6 @@
     </div>
 </div>
 
-<button id="myButton" class="button">
-    <div id="spinner" style="display:none; background-image: url('https://i.stack.imgur.com/h6viz.gif'); background-position: center center; width: 100%; height: 30px"></div>Click me fool</button>
-<div id="myContainer"></div>
 
 <?php
     // Object

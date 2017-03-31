@@ -148,6 +148,7 @@
                 $hero_video = get_field('hero_video');
                 if($hero_video) :
             ?>
+			<div class="video-cover"></div>
             <video autoplay loop class="c-hero__video video" zcontrols muted data-hero-video id="hero-video" >
                 <source src="<?php echo $hero_video; ?>" type="video/mp4">
             </video>

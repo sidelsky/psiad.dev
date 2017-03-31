@@ -10,14 +10,15 @@
 .menu-item {
         display: inline-block;
         text-transform: uppercase;
+        //font-weight: 700;
     a {
         display: block;
         margin: 0 10px;
-        color: rgba(255,255,255, 0.7);
+        color: rgba(255,255,255, 1);
 
         // Hover
         &:hover {
-             color: rgba(255,255,255, 1);
+             color: rgba(255,255,255, 0.7);
         }
         
     }

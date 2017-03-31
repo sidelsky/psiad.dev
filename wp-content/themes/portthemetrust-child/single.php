@@ -38,6 +38,13 @@
 			<?php if(of_get_option('ttrust_post_show_featured_image')) : ?>
 				<?php get_template_part( 'part-post-thumb'); ?>
 			<?php endif; ?>
+
+			<?php
+				// If is people
+				if ( is_singular( 'testimonial' ) ) :
+			?>
+			<img src="<?php the_post_thumbnail_url( "large" ) ?>" alt=""><br>
+			<?php endif; ?>
 			
 			<?php the_content(); ?>
 			

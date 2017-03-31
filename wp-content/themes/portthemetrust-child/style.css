@@ -135,6 +135,7 @@ img,
 object,
 embed {
   max-width: 100%;
+  height: auto;
 }
 
 .homeSection img,
@@ -822,7 +823,7 @@ h2.extraSpacing {
   margin: 0 30px;
   text-align: center;
   position: relative;
-  z-index: 2;
+  z-index: 3;
   display: inline-block;
 }
 
@@ -1071,6 +1072,10 @@ body.home #testimonials {
   display: block;
   text-align: center;
   color: currentColor;
+}
+
+#featuredPages .moreLink a {
+  color: #e14a21;
 }
 
 #featuredPages .title {
@@ -2888,6 +2893,17 @@ ol#commentslist {
   z-index: 1;
 }
 
+.video-cover {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 2;
+}
+
 .primary ul {
   text-align: right;
   margin-top: 10px;
@@ -2901,11 +2917,11 @@ ol#commentslist {
 .menu-item a {
   display: block;
   margin: 0 10px;
-  color: rgba(255, 255, 255, 0.7);
+  color: white;
 }
 
 .menu-item a:hover {
-  color: white;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 /*# sourceMappingURL=style.css.map */
